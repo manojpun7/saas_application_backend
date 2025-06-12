@@ -3,7 +3,8 @@ const app = express()
 import AuthController from "./controller/globals/auth/authController"
 app.use(express.json());
 
-app.use("/api",AuthController.registerUser)
+app.use("/api/register",AuthController.registerUser)
+app.use("/api/login",AuthController.loginUser)
 
 
 

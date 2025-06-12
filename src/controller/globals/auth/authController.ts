@@ -1,7 +1,3 @@
-import { Request, Response } from "express";
-import User from "../../../database/models/userModel";
-import bcrypt from "bcrypt";
-
 //this is the functional controller
 // const registerUser = async (req:Request,res:Response)=>{
 //    const {username,password,email} = req.body
@@ -23,6 +19,10 @@ import bcrypt from "bcrypt";
 
 // }
 
+import { Request, Response } from "express";
+import User from "../../../database/models/userModel";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 //class based controller
 
 class AuthController {
@@ -34,7 +34,7 @@ class AuthController {
       const { username, password, email } = req.body;
       if (!username || !password || !email) {
         res.status(400).json({
-          message: "Please provide username, password, email",
+          message: "Please provide please username, password, email",
         });
         return;
       }
@@ -51,7 +51,49 @@ class AuthController {
       console.log("error in register controller", error);
     }
   }
+
+  static async loginUser(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        res.status(400).json({
+          message: "please provide all the credentials",
+        });
+        return;
+      }
+      const data = await User.findAll({
+        where: {
+          email: email,
+        },
+      });
+      if (data.length == 0) {
+        res.status(404).json({
+          message: "not registered ",
+        });
+      } else {
+        const isPasswordMatch = bcrypt.compareSync(password, data[0].password);
+        if (isPasswordMatch) {
+          const token = jwt.sign({ id: data[0].id }, "secrettoken", {
+            expiresIn: "90d",
+          });
+          res.json({
+            token: token,
+            message: "token generated successfully",
+          });
+        } else {
+          res.status(403).json({
+            message: "credential didnot match",
+          });
+        }
+      }
+    } catch (error) {
+      res.status(500).json({
+        message:"internal server error"
+      })
+      console.log("error in loginUser controller", error);
+    }
+  }
 }
 
 export default AuthController;
-
