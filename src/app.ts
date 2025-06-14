@@ -1,11 +1,10 @@
-import express from "express"
+import express from 'express'
 const app = express()
-import AuthController from "./controller/globals/auth/authController"
-app.use(express.json());
+import authRoute from "./route/globals/auth/authRoute"
+import instituteRoute from "./route/institute/instituteRoute"
 
-app.use("/api/register",AuthController.registerUser)
-app.use("/api/login",AuthController.loginUser)
+app.use(express.json())
 
-
-
+app.use("/api",authRoute)
+app.use("/api/institute",instituteRoute)
 export default app
