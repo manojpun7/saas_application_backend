@@ -1,5 +1,7 @@
 import multer from "multer";
 
+
+// locally storage ko lagi
 const storage = multer.diskStorage({
   //location incomming file kata rakne vanne ho
   destination: function (req: Request, file: Express.Multer.File, cb: any) {
