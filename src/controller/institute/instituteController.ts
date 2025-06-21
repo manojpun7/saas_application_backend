@@ -1,16 +1,16 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import sequelize from "../../database/connection";
-import generateRandomInsituteNumber from "../../services/generateRandomInstituteNumber";
-import User from "../../database/models/userModel";
-
 import { IExtendedRequest } from "../../middleware/type";
 import categories from "../../seed";
+import generateRandomInsituteNumber from "../../services/generateRandomInstituteNumber";
+import User from "../../database/models/userModel";
 
 const createInstitute = async (
   req: IExtendedRequest,
   res: Response,
   next: NextFunction
 ) => {
+
   const {
     instituteName,
     instituteEmail,
@@ -19,33 +19,32 @@ const createInstitute = async (
   } = req.body;
   const instituteVatNo = req.body.instituteVatNo || null;
   const institutePanNo = req.body.institutePanNo || null;
-
   if (
     !instituteName ||
     !instituteEmail ||
-    !instituteAddress ||
-    !institutePhoneNumber
+    !institutePhoneNumber ||
+    !instituteAddress
   ) {
     res.status(400).json({
       message:
-        "please provide instituteName, instituteEmail , institutePhoneNumber, instituteAddress",
+        "Please provide instituteName,instituteEmail, institutePhoneNumber,  instituteAddress ",
     });
     return;
   }
+ 
 
   const instituteNumber = generateRandomInsituteNumber();
-
   await sequelize.query(`CREATE TABLE IF NOT EXISTS institute_${instituteNumber} (
-            id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            instituteName VARCHAR(255) NOT NULL,
-            instituteEmail VARCHAR(255) NOT NULL,
-            institutePhoneNumber VARCHAR(20) NOT NULL,
-            instituteAddress TEXT NOT NULL,
-            instituteVatNo VARCHAR(255),
-            institutePanNo VARCHAR(255),
-            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+            instituteName VARCHAR(255) NOT NULL, 
+            instituteEmail VARCHAR(255) NOT NULL , 
+            institutePhoneNumber VARCHAR(255) NOT NULL , 
+            instituteAddress VARCHAR(255) NOT NULL, 
+            institutePanNo VARCHAR(255), 
+            instituteVatNo VARCHAR(255), 
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
             updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )`);
+            )`);
 
   await sequelize.query(
     `INSERT INTO institute_${instituteNumber}(instituteName,instituteEmail,institutePhoneNumber,instituteAddress,institutePanNo,instituteVatNo) VALUES(?,?,?,?,?,?)`,
@@ -60,6 +59,7 @@ const createInstitute = async (
       ],
     }
   );
+  //
   // to create user_institute history table jaha chai users le k k institute haru create garyo sabai ko number basnu paryo
   await sequelize.query(`CREATE TABLE IF NOT EXISTS user_institute(
             id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
@@ -87,11 +87,13 @@ const createInstitute = async (
       }
     );
   }
+
   if (req.user) {
     req.user.currentInstituteNumber = instituteNumber;
   }
   next();
 };
+
 const createTeacherTable = async (
   req: IExtendedRequest,
   res: Response,
@@ -99,7 +101,7 @@ const createTeacherTable = async (
 ) => {
   const instituteNumber = req.user?.currentInstituteNumber;
   await sequelize.query(`CREATE TABLE IF NOT EXISTS teacher_${instituteNumber}(
-              id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+               id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()), 
               teacherName VARCHAR(255) NOT NULL, 
               teacherEmail VARCHAR(255) NOT NULL UNIQUE, 
               teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE,
@@ -111,6 +113,7 @@ const createTeacherTable = async (
               )`);
   next();
 };
+
 const createStudentTable = async (
   req: IExtendedRequest,
   res: Response,
@@ -119,7 +122,7 @@ const createStudentTable = async (
   try {
     const instituteNumber = req.user?.currentInstituteNumber;
     await sequelize.query(`CREATE TABLE IF NOT EXISTS student_${instituteNumber}(
-            id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+             id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
             studentName VARCHAR(255) NOT NULL, 
             studentPhoneNo VARCHAR(255) NOT NULL UNIQUE, 
             studentAddress TEXT, 
@@ -137,35 +140,10 @@ const createStudentTable = async (
   }
 };
 
-const createCategoryTable = async (
-  req: IExtendedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const instituteNumber = req.user?.currentInstituteNumber;
-  await sequelize.query(`CREATE TABLE IF NOT EXISTS category_${instituteNumber}(
-        id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
-        categoryName VARCHAR(100) NOT NULL, 
-        categoryDescription TEXT,
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )`);
-
-  categories.forEach(async function (category) {
-    await sequelize.query(
-      `INSERT INTO category_${instituteNumber}(categoryName,categoryDescription) VALUES(?,?)`,
-      {
-        replacements: [category.categoryName, category.categoryDescription],
-      }
-    );
-  });
-  next();
-};
-
 const createCourseTable = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber;
   await sequelize.query(`CREATE TABLE IF NOT EXISTS course_${instituteNumber}(
-        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
         courseName VARCHAR(255) NOT NULL UNIQUE, 
         coursePrice VARCHAR(255) NOT NULL, 
         courseDuration VARCHAR(100) NOT NULL, 
@@ -182,10 +160,11 @@ const createCourseTable = async (req: IExtendedRequest, res: Response) => {
   });
 };
 
+
+
 export {
   createInstitute,
   createTeacherTable,
   createStudentTable,
   createCourseTable,
-  createCategoryTable,
 };

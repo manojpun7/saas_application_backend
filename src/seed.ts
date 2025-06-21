@@ -1,10 +1,10 @@
 const categories = [
   {
-    categoryName: "web_development",
+    categoryName: "ke ra",
     categoryDescription: "web developemnt is related to website...",
   },
   {
-    categoryName: "app_development",
+    categoryName: "syau",
     categoryDescription: "app developemnt is related to app...",
   },
 ];

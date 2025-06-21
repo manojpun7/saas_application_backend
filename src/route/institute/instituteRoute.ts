@@ -2,7 +2,6 @@ import express, { Router } from "express";
 
 import isLoggedIn from "../../middleware/middleware";
 import {
-  createCategoryTable,
   createCourseTable,
   createInstitute,
   createStudentTable,
@@ -19,7 +18,6 @@ router
     createInstitute,
     createTeacherTable,
     createStudentTable,
-    createCategoryTable,
     asyncErrorHandler(createCourseTable)
   );
 
