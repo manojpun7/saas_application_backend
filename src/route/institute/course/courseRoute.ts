@@ -35,7 +35,7 @@ router
     upload.single("courseThumbnail"),
     asyncErrorHandler(createCourse)
   )
-  .get(asyncErrorHandler(getAllCourse));
+  .get(isLoggedIn, asyncErrorHandler(getAllCourse));
 
 router
   .route("/:id")
