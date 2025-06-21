@@ -23,8 +23,8 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
         "Please provide coursePrice, courseName, courseDescription, courseDuration, courseLevel",
     });
   }
-  console.log(req.file, "File");
-  const courseThumbnail = null;
+  const courseThumbnail = req.file ? req.file.path : null;
+  console.log(courseThumbnail, "la hai course ko thumbnail");
 
   const returnedData = await sequelize.query(
     `INSERT INTO course_${instituteNumber}(coursePrice,courseName,courseDescription,courseDuration,courseLevel,courseThumbnail) VALUES(?,?,?,?,?,?)`,
