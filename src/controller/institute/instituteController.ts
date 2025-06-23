@@ -10,7 +10,6 @@ const createInstitute = async (
   res: Response,
   next: NextFunction
 ) => {
-
   const {
     instituteName,
     instituteEmail,
@@ -31,7 +30,6 @@ const createInstitute = async (
     });
     return;
   }
- 
 
   const instituteNumber = generateRandomInsituteNumber();
   await sequelize.query(`CREATE TABLE IF NOT EXISTS institute_${instituteNumber} (
@@ -160,11 +158,35 @@ const createCourseTable = async (req: IExtendedRequest, res: Response) => {
   });
 };
 
+const createCategoryTable = async (
+  req: IExtendedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const instituteNumber = req.user?.currentInstituteNumber;
+  await sequelize.query(`CREATE TABLE IF NOT EXISTS category_${instituteNumber}(
+        id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+        categoryName VARCHAR(100) NOT NULL, 
+        categoryDescription TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`);
 
+  categories.forEach(async function (category) {
+    await sequelize.query(
+      `INSERT INTO category_${instituteNumber}(categoryName,categoryDescription) VALUES(?,?)`,
+      {
+        replacements: [category.categoryName, category.categoryDescription],
+      }
+    );
+  });
+  next();
+};
 
 export {
   createInstitute,
   createTeacherTable,
   createStudentTable,
   createCourseTable,
+  createCategoryTable,
 };
