@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import sequelize from "../../../database/connection";
 import { IExtendedRequest } from "../../../middleware/type";
+import { QueryTypes } from "sequelize";
 
 const createCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber;
@@ -31,6 +32,7 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
   const returnedData = await sequelize.query(
     `INSERT INTO course_${instituteNumber}(coursePrice,courseName,courseDescription,courseDuration,courseLevel,categoryId,courseThumbnail) VALUES(?,?,?,?,?,?,?)`,
     {
+      type: QueryTypes.INSERT,
       replacements: [
         coursePrice,
         courseName,
@@ -53,10 +55,11 @@ const deleteCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber;
   const courseId = req.params.id;
   // first check if course exists or not , if exists --> delete else not delete
-  const [courseData] = await sequelize.query(
+  const courseData = await sequelize.query(
     `SELECT * FROM course_${instituteNumber} WHERE id=?`,
     {
       replacements: [courseId],
+      type: QueryTypes.SELECT,
     }
   );
 
@@ -77,7 +80,11 @@ const deleteCourse = async (req: IExtendedRequest, res: Response) => {
 const getAllCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber;
   const courses = await sequelize.query(
-    `SELECT * FROM course_${instituteNumber}`
+    `SELECT * FROM course_${instituteNumber} JOIN category_${instituteNumber}
+    ON course_${instituteNumber}.categoryId = category_${instituteNumber}.id`,
+    {
+      type: QueryTypes.SELECT,
+    }
   );
   res.status(200).json({
     message: "Course fetched",
@@ -92,6 +99,7 @@ const getSingleCourse = async (req: IExtendedRequest, res: Response) => {
     `SELECT * FROM course_${instituteNumber} WHERE id = ?`,
     {
       replacements: [courseId],
+      type: QueryTypes.SELECT,
     }
   );
   res.status(200).json({
