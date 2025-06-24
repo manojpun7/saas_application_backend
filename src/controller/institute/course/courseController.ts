@@ -9,6 +9,7 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
     courseName,
     courseDescription,
     courseDuration,
+    categoryId,
     courseLevel,
   } = req.body;
   if (
@@ -16,18 +17,19 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
     !courseName ||
     !courseDescription ||
     !courseDuration ||
-    !courseLevel
+    !courseLevel ||
+    !categoryId
   ) {
     return res.status(400).json({
       messsage:
-        "Please provide coursePrice, courseName, courseDescription, courseDuration, courseLevel",
+        "Please provide coursePrice, courseName, courseDescription, courseDuration, courseLevel,categoryId",
     });
   }
   const courseThumbnail = req.file ? req.file.path : null;
   console.log(courseThumbnail, "la hai course ko thumbnail");
 
   const returnedData = await sequelize.query(
-    `INSERT INTO course_${instituteNumber}(coursePrice,courseName,courseDescription,courseDuration,courseLevel,courseThumbnail) VALUES(?,?,?,?,?,?)`,
+    `INSERT INTO course_${instituteNumber}(coursePrice,courseName,courseDescription,courseDuration,courseLevel,categoryId,courseThumbnail) VALUES(?,?,?,?,?,?,?)`,
     {
       replacements: [
         coursePrice,
@@ -35,6 +37,7 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
         courseDescription,
         courseDuration,
         courseLevel,
+        categoryId,
         courseThumbnail,
       ],
     }
