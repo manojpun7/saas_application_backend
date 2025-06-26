@@ -23,6 +23,7 @@ import { Request, Response } from "express";
 import User from "../../../database/models/userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import generateJwtToken from "../../../services/generateJwtToken";
 //class based controller
 
 class AuthController {
@@ -74,9 +75,7 @@ class AuthController {
       } else {
         const isPasswordMatch = bcrypt.compareSync(password, data[0].password);
         if (isPasswordMatch) {
-          const token = jwt.sign({ id: data[0].id }, "secrettoken", {
-            expiresIn: "90d",
-          });
+          const token = generateJwtToken({ id: data[0].id });
           res.json({
             token: token,
             message: "token generated successfully",
@@ -89,8 +88,8 @@ class AuthController {
       }
     } catch (error) {
       res.status(500).json({
-        message:"internal server error"
-      })
+        message: "internal server error",
+      });
       console.log("error in loginUser controller", error);
     }
   }
