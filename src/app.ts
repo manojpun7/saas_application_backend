@@ -6,10 +6,17 @@ import courseRoute from "./route/institute/course/courseRoute";
 import categoryRoute from "./route/institute/category/categoryRoute";
 import teacherRoute from "./route/institute/teacher/teacherRoute";
 import teacherLoginRoute from "./route/teacher/teacherLoginRoute";
+import cors from 'cors'
+
+app.use(express.json())
+
+app.use(cors({
+    origin : "http://localhost:3000"
+}))
 
 app.use(express.json());
 //global route
-app.use("/api", authRoute);
+app.use("/api/auth", authRoute);
 
 // institute routes
 app.use("/api/institute", instituteRoute);
