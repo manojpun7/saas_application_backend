@@ -77,8 +77,11 @@ class AuthController {
         if (isPasswordMatch) {
           const token = generateJwtToken({ id: data[0].id });
           res.json({
-            token: token,
-            message: "token generated successfully",
+            data:{
+               token: token,
+               username: data[0].username
+            },
+            message: "logged in successfull",
           });
         } else {
           res.status(403).json({

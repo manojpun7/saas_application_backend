@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/api/auth", authRoute);
 
 // institute routes
-app.use("/api/institute", instituteRoute);
+app.use("/api/institute/", instituteRoute);
 app.use("/api/institute/course", courseRoute);
 app.use("/api/institute/category", categoryRoute);
 app.use("/api/institute/teacher", teacherRoute);
