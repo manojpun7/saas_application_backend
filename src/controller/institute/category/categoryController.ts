@@ -18,8 +18,24 @@ const createCategory = async (req: IExtendedRequest, res: Response) => {
       replacements: [categoryName, categoryDescription],
     }
   );
+
+  const [CategoryData]: { id: string; createdAt: Date }[] =
+    await sequelize.query(
+      `SELECT id, createdAt from category_${instituteNumber} WHERE categoryName=?`,
+      {
+        replacements: [categoryName],
+        type: QueryTypes.SELECT,
+      }
+    );
+
   res.status(200).json({
     message: "Category added successfully",
+    data: {
+      categoryName,
+      categoryDescription,
+      id: CategoryData.id,
+      createdAt: CategoryData.createdAt,
+    },
   });
 };
 
