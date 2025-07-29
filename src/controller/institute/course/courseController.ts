@@ -46,8 +46,22 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
   );
 
   console.log(returnedData);
+
+  const [courseData]: { id: string }[] = await sequelize.query(
+    `SELECT id from course_${instituteNumber} WHERE courseName=?`,
+    {
+      replacements: [courseName],
+      type: QueryTypes.SELECT,
+    }
+  );
+
   res.status(200).json({
-    message: "course created successfully",
+    message: "Category added successfully",
+    data: {
+      courseName,
+      coursePrice,
+      id: courseData.id,
+    },
   });
 };
 
