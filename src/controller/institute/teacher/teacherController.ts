@@ -12,7 +12,7 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
     teacherName,
     teacherEmail,
     teacherPhoneNumber,
-    teacherExpertise,
+    teacherExperience,
     teacherSalary,
     teacherJoinedDate,
     courseId,
@@ -24,26 +24,26 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
     !teacherName ||
     !teacherEmail ||
     !teacherPhoneNumber ||
-    !teacherExpertise ||
+    !teacherExperience ||
     !teacherSalary ||
     !teacherJoinedDate
   ) {
     return res.status(400).json({
       message:
-        "Please please provide teacherName,teacherEmail,teacherPhoneNumber,teacherExpertise,teacherSalary,teacherJoinedDate",
+        "Please please provide teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherSalary,teacherJoinedDate",
     });
   }
   // password generate functionnn
   const data = generateRandomPassword(teacherName);
   const insertedData = await sequelize.query(
-    `INSERT INTO teacher_${instituteNumber}(teacherName,teacherEmail,teacherPhoneNumber,teacherExpertise,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword) VALUES(?,?,?,?,?,?,?,?)`,
+    `INSERT INTO teacher_${instituteNumber}(teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword) VALUES(?,?,?,?,?,?,?,?)`,
     {
       type: QueryTypes.INSERT,
       replacements: [
         teacherName,
         teacherEmail,
         teacherPhoneNumber,
-        teacherExpertise,
+        teacherExperience,
         teacherJoinedDate,
         teacherSalary,
         teacherPhoto,
