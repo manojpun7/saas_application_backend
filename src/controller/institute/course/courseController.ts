@@ -48,8 +48,9 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
   console.log(returnedData);
 
   const [courseData]: { id: string }[] = await sequelize.query(
-    `SELECT id from course_${instituteNumber}`,
+    `SELECT id from course_${instituteNumber} WHERE courseName=?`,
     {
+      replacements: [courseName],
       type: QueryTypes.SELECT,
     }
   );
@@ -57,9 +58,9 @@ const createCourse = async (req: IExtendedRequest, res: Response) => {
   res.status(200).json({
     message: "Category added successfully",
     data: {
+      id: courseData.id,
       courseName,
       coursePrice,
-      id: courseData.id,
       courseDescription,
       courseDuration,
       courseLevel,
@@ -98,7 +99,7 @@ const getAllCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber;
 
   const courses = await sequelize.query(
-    `SELECT * FROM course_${instituteNumber} JOIN category_${instituteNumber} ON course_${instituteNumber}.categoryId = category_${instituteNumber}.id`,
+    `SELECT * FROM course_${instituteNumber}`,
     {
       type: QueryTypes.SELECT,
     }
