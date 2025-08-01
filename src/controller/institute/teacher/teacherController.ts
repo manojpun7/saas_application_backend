@@ -27,11 +27,12 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
     !teacherExperience ||
     !teacherSalary ||
     !teacherJoinedDate ||
-    !courseId
+    !courseId ||
+    !teacherPhoto
   ) {
     return res.status(400).json({
       message:
-        "Please please provide teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherSalary,teacherJoinedDate, courseId",
+        "Please provide teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherSalary,teacherJoinedDate, courseId",
     });
   }
   // password generate functionnn
