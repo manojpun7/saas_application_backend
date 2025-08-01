@@ -38,7 +38,7 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
   // password generate functionnn
   const data = generateRandomPassword(teacherName);
   const insertedData = await sequelize.query(
-    `INSERT INTO teacher_${instituteNumber}(teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword) VALUES(?,?,?,?,?,?,?,?)`,
+    `INSERT INTO teacher_${instituteNumber}(teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword, courseId) VALUES(?,?,?,?,?,?,?,?,?)`,
     {
       type: QueryTypes.INSERT,
       replacements: [
@@ -50,11 +50,12 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
         teacherSalary,
         teacherPhoto,
         data.hashedVersion,
+        courseId,
       ],
     }
   );
 
-  const teacherData: { id: string }[] = await sequelize.query(
+  const [teacherData]: { id: string }[] = await sequelize.query(
     `SELECT id FROM teacher_${instituteNumber} WHERE teacherEmail=?`,
     {
       type: QueryTypes.SELECT,
@@ -66,7 +67,7 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
     `UPDATE course_${instituteNumber} SET teacherId=? WHERE id=?`,
     {
       type: QueryTypes.UPDATE,
-      replacements: [teacherData[0].id, courseId],
+      replacements: [teacherData.id, courseId],
     }
   );
 
@@ -87,7 +88,8 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
       teacherJoinedDate,
       teacherSalary,
       teacherPhoto,
-      id: teacherData,
+      courseId,
+      id: teacherData.id,
     },
   });
 };
