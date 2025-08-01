@@ -108,6 +108,7 @@ const createTeacherTable = async (
               teacherSalary VARCHAR(100),
               teacherPhoto VARCHAR(255),
               teacherPassword VARCHAR(255),
+              courseId VARCHAR(100) REFERENCES course_${instituteNumber}(id),
               createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
               updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
               )`);

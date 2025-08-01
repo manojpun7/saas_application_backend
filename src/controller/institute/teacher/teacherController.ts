@@ -26,11 +26,12 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
     !teacherPhoneNumber ||
     !teacherExperience ||
     !teacherSalary ||
-    !teacherJoinedDate
+    !teacherJoinedDate ||
+    !courseId
   ) {
     return res.status(400).json({
       message:
-        "Please please provide teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherSalary,teacherJoinedDate",
+        "Please please provide teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherSalary,teacherJoinedDate, courseId",
     });
   }
   // password generate functionnn
@@ -77,6 +78,16 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
 
   res.status(200).json({
     message: "teacher created",
+    data: {
+      teacherName,
+      teacherEmail,
+      teacherPhoneNumber,
+      teacherExperience,
+      teacherJoinedDate,
+      teacherSalary,
+      teacherPhoto,
+      id: teacherData,
+    },
   });
 };
 
