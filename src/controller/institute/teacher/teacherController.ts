@@ -63,13 +63,13 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
     }
   );
   // console.log(teacherData, "teacher data");
-  await sequelize.query(
-    `UPDATE course_${instituteNumber} SET teacherId=? WHERE id=?`,
-    {
-      type: QueryTypes.UPDATE,
-      replacements: [teacherData.id, courseId],
-    }
-  );
+  // await sequelize.query(
+  //   `UPDATE course_${instituteNumber} SET teacherId=? WHERE id=?`,
+  //   {
+  //     type: QueryTypes.UPDATE,
+  //     replacements: [teacherData.id, courseId],
+  //   }
+  // );
 
   const mailInformation = {
     to: teacherEmail,
@@ -97,7 +97,7 @@ const createTeacher = async (req: IExtendedRequest, res: Response) => {
 const getTeachers = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber;
   const teachers = await sequelize.query(
-    `SELECT * FROM teacher_${instituteNumber}`,
+    `SELECT t.*, c.courseName FROM teacher_${instituteNumber} AS t JOIN course_${instituteNumber} AS c ON t.courseId = c.id`,
     {
       type: QueryTypes.SELECT,
     }

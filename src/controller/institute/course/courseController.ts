@@ -99,7 +99,7 @@ const getAllCourse = async (req: IExtendedRequest, res: Response) => {
   const instituteNumber = req.user?.currentInstituteNumber;
 
   const courses = await sequelize.query(
-    `SELECT * FROM course_${instituteNumber}`,
+    `SELECT c.*, cat.categoryName , cat.categoryDescription FROM course_${instituteNumber} AS c JOIN category_${instituteNumber} AS cat ON c.categoryId = cat.id`,
     {
       type: QueryTypes.SELECT,
     }
