@@ -163,7 +163,6 @@ const createCourseTable = async (req: IExtendedRequest, res: Response) => {
   });
 };
 
-
 const createCategoryTable = async (
   req: IExtendedRequest,
   res: Response,
@@ -189,7 +188,6 @@ const createCategoryTable = async (
   next();
 };
 
-
 //client teacher related table
 const createCourseChapterTable = async (
   req: IExtendedRequest,
@@ -209,6 +207,24 @@ const createCourseChapterTable = async (
   next();
 };
 
+const createChapterLessonTable = async (
+  req: IExtendedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const instituteNumber = req.user?.currentInstituteNumber;
+  await sequelize.query(`CREATE TABLE IF NOT EXISTS chapter_lesson${instituteNumber}(
+        id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()), 
+        lessonName VARCHAR(255) NOT NULL, 
+        lessonDescription TEXT,
+        lessonVideoUrl VARCHAR(200) NOT NULL,
+        lessonThumbnail VARCHAR(200) NOT NULL,
+        chapterId VARCHAR(36) REFERENCES course_chapter_${instituteNumber}(id) ON DELETE CASCADE ON UPDATE CASCADE, 
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+        )`);
+  next();
+};
 
 export {
   createInstitute,
@@ -217,4 +233,5 @@ export {
   createCourseTable,
   createCategoryTable,
   createCourseChapterTable,
+  createChapterLessonTable,
 };

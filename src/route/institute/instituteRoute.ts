@@ -1,14 +1,16 @@
 import express, { Router } from "express";
 
-import isLoggedIn from "../../middleware/middleware";
 import {
   createCategoryTable,
+  createChapterLessonTable,
+  createCourseChapterTable,
   createCourseTable,
   createInstitute,
   createStudentTable,
   createTeacherTable,
 } from "../../controller/institute/instituteController";
 import asyncErrorHandler from "../../services/asyncErrorHandler";
+import { isLoggedIn } from "../../middleware/middleware";
 
 const router: Router = express.Router();
 
@@ -20,6 +22,8 @@ router
     createTeacherTable,
     createStudentTable,
     createCategoryTable,
+    createCourseChapterTable,
+    createChapterLessonTable,
     asyncErrorHandler(createCourseTable)
   );
 

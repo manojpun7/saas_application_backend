@@ -1,5 +1,5 @@
 import express, { Request, Router } from "express";
-import isLoggedIn from "../../../middleware/middleware";
+import {isLoggedIn} from "../../../middleware/middleware";
 import asyncErrorHandler from "../../../services/asyncErrorHandler";
 import {
   createCourse,
