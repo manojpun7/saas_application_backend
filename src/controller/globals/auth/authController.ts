@@ -63,23 +63,23 @@ class AuthController {
         });
         return;
       }
-      const data = await User.findAll({
+      const [data] = await User.findAll({
         where: {
           email: email,
         },
       });
-      if (data.length == 0) {
+      if (!data) {
         res.status(404).json({
           message: "not registered ",
         });
       } else {
-        const isPasswordMatch = bcrypt.compareSync(password, data[0].password);
+        const isPasswordMatch = bcrypt.compareSync(password, data.password);
         if (isPasswordMatch) {
-          const token = generateJwtToken({ id: data[0].id });
+          const token = generateJwtToken({ id: data.id });
           res.json({
             data:{
                token: token,
-               username: data[0].username
+               username: data.username
             },
             message: "logged in successfull",
           });

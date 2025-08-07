@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../database/models/userModel";
 
@@ -25,7 +25,7 @@ const isLoggedIn = async (
       });
     } else {
       const userData = await User.findByPk(resultaayo.id, {
-        attributes: ["id", "currentInstituteNumber"],
+        attributes: ["id", "currentInstituteNumber", "role"],
       });
       if (!userData) {
         res.status(403).json({
@@ -39,4 +39,18 @@ const isLoggedIn = async (
   });
 };
 
-export default isLoggedIn;
+const restrictTo = (role: string) => {
+  return (req: IExtendedRequest, res: Response, next: NextFunction) => {
+    let userRole = req.user?.role;
+
+    if (userRole === role) {
+      next();
+    } else {
+      res.status(403).json({
+        message: "invalid, unauthorized access !",
+      });
+    }
+  };
+};
+
+export { isLoggedIn, restrictTo };
