@@ -4,8 +4,10 @@ import authRoute from "./route/globals/auth/authRoute";
 import instituteRoute from "./route/institute/instituteRoute";
 import courseRoute from "./route/institute/course/courseRoute";
 import categoryRoute from "./route/institute/category/categoryRoute";
-import teacherRoute from "./route/institute/teacher/teacherRoute";
-import teacherLoginRoute from "./route/teacher/teacherLoginRoute";
+import teacherInstituteRoute from "./route/institute/teacher/teacherRoute";
+import teacherRoute from "./route/teacher/teacher-route";
+import chapterRoute from "./route/teacher/course/chapters/course-chapter-route";
+import lessonRoute from "./route/teacher/course/lessons/lesson-route";
 import cors from 'cors'
 
 app.use(express.json())
@@ -22,9 +24,11 @@ app.use("/api/auth", authRoute);
 app.use("/api/institute/", instituteRoute);
 app.use("/api/institute/course", courseRoute);
 app.use("/api/institute/category", categoryRoute);
-app.use("/api/institute/teacher", teacherRoute);
+app.use("/api/institute/teacher", teacherInstituteRoute);
 
 //teacher login routes
-app.use("/api/teacher", teacherLoginRoute);
+app.use("/api/teacher", teacherRoute);
+app.use("/api/teacher/course", chapterRoute);
+app.use("/api/teacher/course/", lessonRoute);
 
 export default app;
