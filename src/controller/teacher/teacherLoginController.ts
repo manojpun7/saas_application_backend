@@ -41,11 +41,18 @@ const teacherLogin = async (req: Request, res: Response) => {
       message: "invalid credentials",
     });
   } else {
-    const token = generateJwtToken({id: teacherData[0].id,instituteNumber:teacherInstituteNumber});
+    const token = generateJwtToken({
+      id: teacherData[0].id,
+      instituteNumber: teacherInstituteNumber,
+    });
     res.status(200).json({
       message: "teacher logged in",
-      token,
+      data: {
+        teacherToken: token,
+        teacherInstituteNumber,
+        teacherEmail,
+      },
     });
   }
 };
-export {teacherLogin}
+export { teacherLogin };
