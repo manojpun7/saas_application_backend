@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../database/models/userModel";
 
-import { IExtendedRequest } from "../middleware/type";
+import { IExtendedRequest, UserRole } from "../middleware/type";
 
 const isLoggedIn = async (
   req: IExtendedRequest,
@@ -39,11 +39,11 @@ const isLoggedIn = async (
   });
 };
 
-const restrictTo = (role: string) => {
+const restrictTo = (...roles: UserRole[]) => {
   return (req: IExtendedRequest, res: Response, next: NextFunction) => {
-    let userRole = req.user?.role;
+    let userRole = req.user?.role as UserRole;
 
-    if (userRole === role) {
+    if (roles.includes(userRole)) {
       next();
     } else {
       res.status(403).json({
