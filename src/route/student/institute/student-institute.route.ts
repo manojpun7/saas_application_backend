@@ -1,7 +1,7 @@
 import { Router} from "express";
 import express from 'express'
-import asyncErrorHandler from "../../services/asyncErrorHandler";
-import {instituteCourseListForStudent, instituteListForStudent} from "../../controller/student/institute/student-institute.controller";
+import asyncErrorHandler from "../../../services/asyncErrorHandler";
+import {instituteCourseListForStudent, instituteListForStudent} from "../../../controller/student/institute/student-institute.controller";
 
 
 

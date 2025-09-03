@@ -39,6 +39,18 @@ const isLoggedIn = async (
   });
 };
 
+const changeUserForTableName = (
+  req: IExtendedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user && req.user.id) {
+    const newUserId = req.user.id.split("-").join("_");
+    req.user = {...req.user, id: newUserId , role: req.user.role };
+    next();
+  }
+};
+
 const restrictTo = (...roles: UserRole[]) => {
   return (req: IExtendedRequest, res: Response, next: NextFunction) => {
     let userRole = req.user?.role as UserRole;
@@ -53,4 +65,4 @@ const restrictTo = (...roles: UserRole[]) => {
   };
 };
 
-export { isLoggedIn, restrictTo };
+export { isLoggedIn, restrictTo, changeUserForTableName };

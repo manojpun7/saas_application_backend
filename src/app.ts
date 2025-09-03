@@ -6,16 +6,20 @@ import courseRoute from "./route/institute/course/courseRoute";
 import categoryRoute from "./route/institute/category/categoryRoute";
 import teacherInstituteRoute from "./route/institute/teacher/teacherRoute";
 import teacherRoute from "./route/teacher/teacher-route";
-import studentRoute from "./route/student/student-institute.route";
+import studentRoute from "./route/student/institute/student-institute.route";
 import chapterRoute from "./route/teacher/course/chapters/course-chapter-route";
 import lessonRoute from "./route/teacher/course/lessons/lesson-route";
-import cors from 'cors'
+import studentCartRoute from "./route/student/cart/student-cart.route";
 
-app.use(express.json())
+import cors from "cors";
 
-app.use(cors({
-    origin : "http://localhost:3000"
-}))
+app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 app.use(express.json());
 //global route
@@ -33,6 +37,6 @@ app.use("/api/teacher/course", chapterRoute);
 app.use("/api/teacher/course/", lessonRoute);
 
 //student routes
-app.use('/api/student/',studentRoute)
-
+app.use("/api/student/", studentRoute);
+app.use("/api/student/", studentCartRoute);
 export default app;
