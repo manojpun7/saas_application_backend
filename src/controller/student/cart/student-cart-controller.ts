@@ -19,14 +19,15 @@ const insertIntoCartTableOfStudent = async (
         id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
         courseId VARCHAR(36) REFERENCES course_${instituteId}(id), 
         instituteId VARCHAR(36) REFERENCES institute_${instituteId}(id),
+        userId VARCHAR(36) REFERENCES users(id),
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
         updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
         )`);
   await sequelize.query(
-    `INSERT INTO student_cart_${userId}(courseId, instituteId) VALUES(?, ?)`,
+    `INSERT INTO student_cart_${userId}(courseId, instituteId, userId) VALUES(?,?, ?)`,
     {
       type: QueryTypes.INSERT,
-      replacements: [courseId, instituteId],
+      replacements: [courseId, instituteId, userId],
     }
   );
   res.status(200).json({
@@ -39,15 +40,16 @@ const fetchStudentCartItems = async (req: IExtendedRequest, res: Response) => {
   let cartDatas = [];
   const datas: { instituteId: string; courseId: string }[] =
     await sequelize.query(
-      `SELECT courseId , instituteId FROM student_cart_${userId}`,
+      `SELECT courseId , instituteId FROM student_cart_${userId} WHERE userId=?`,
       {
         type: QueryTypes.SELECT,
+        replacements: [userId],
       }
     );
 
   for (let data of datas) {
     const [cartItem] = await sequelize.query(
-      `SELECT * FROM course_${data.instituteId} WHERE id = '${data.courseId}'`,
+      `SELECT * FROM course_${data.instituteId} JOIN category_${data.instituteId} ON course_${data.instituteId}.categoryId = category_${data.instituteId}.id WHERE id = '${data.courseId}'`,
       {
         type: QueryTypes.SELECT,
       }
@@ -67,4 +69,29 @@ const fetchStudentCartItems = async (req: IExtendedRequest, res: Response) => {
   }
 };
 
-export { fetchStudentCartItems, insertIntoCartTableOfStudent };
+const removeStudentCartItems = async (req: IExtendedRequest, res: Response) => {
+  const userId = req.user?.id;
+  const cartTableId = req.params.cartTableId;
+
+  if (!cartTableId)
+    return res.status(400).json({
+      message: "please provide cart Table Id",
+    });
+  await sequelize.query(
+    `DELETE FROM student_cart_${userId} WHERE cartTableId=?`,
+    {
+      type: QueryTypes.DELETE,
+      replacements: [cartTableId],
+    }
+  );
+
+  res.status(200).json({
+    message: "item deleted successfully",
+  });
+};
+
+export {
+  fetchStudentCartItems,
+  insertIntoCartTableOfStudent,
+  removeStudentCartItems,
+};
