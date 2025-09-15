@@ -4,6 +4,7 @@ import asyncErrorHandler from "../../../services/asyncErrorHandler";
 import {
   fetchStudentCartItems,
   insertIntoCartTableOfStudent,
+  removeStudentCartItems,
 } from "../../../controller/student/cart/student-cart-controller";
 import {
   changeUserForTableName,
@@ -30,5 +31,7 @@ router
     restrictTo(UserRole.Student),
     asyncErrorHandler(fetchStudentCartItems)
   );
+
+  router.route("/cart/:id").delete(isLoggedIn, restrictTo(UserRole.Student),asyncErrorHandler(removeStudentCartItems))
 
 export default router;
