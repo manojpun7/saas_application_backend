@@ -10,6 +10,7 @@ import studentRoute from "./route/student/institute/student-institute.route";
 import chapterRoute from "./route/teacher/course/chapters/course-chapter-route";
 import lessonRoute from "./route/teacher/course/lessons/lesson-route";
 import studentCartRoute from "./route/student/cart/student-cart.route";
+import studentOrderRoute from "./route/student/order/student-order.route";
 
 import cors from "cors";
 
@@ -39,6 +40,7 @@ app.use("/api/teacher/course/", lessonRoute);
 //student routes
 app.use("/api/student/", studentRoute);
 app.use("/api/student/", studentCartRoute);
+app.use("/api/student/", studentOrderRoute);
 
 
 export default app;

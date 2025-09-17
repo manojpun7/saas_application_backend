@@ -3,17 +3,25 @@ import { IExtendedRequest } from "../../../middleware/type";
 import sequelize from "../../../database/connection";
 import User from "../../../database/models/userModel";
 import { QueryTypes } from "sequelize";
+import { khaltiPayment } from "./paymentIntegration";
+
+enum PaymentMethod {
+  KHALTI = "khalti",
+  ESEWA = "esewa",
+  COD = "cod",
+}
 
 const createStudentController = async (
   req: IExtendedRequest,
   res: Response
 ) => {
   const userId = req.user?.id;
-  const userData = await User.findByPk(userId);
-  const { whatsapp_no, remarks } = req.body;
+  const notChangedId = req.user?.id.split("_").join("-"); // i.e change the userId from this  234_23432_23432   to    234-23432-23432
+  const userData = await User.findByPk(notChangedId);
+  const { whatsapp_no, remarks, paymentMethod, amount } = req.body;
 
   const orderDetailsData: { courseId: string; instituteId: string }[] =
-    req.body;
+    req.body.orderDetailsData;
 
   if (orderDetailsData.length === 0)
     return res.status(400).json({
@@ -42,7 +50,7 @@ const createStudentController = async (
         id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
         courseId VARCHAR(36),
         instituteId VARCHAR(36),
-        orderId VARCHAR(26) REFERENCES student_order_${userId} NOT NULL,
+        orderId VARCHAR(26) REFERENCES student_order_${userId},
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
         updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
         
@@ -53,7 +61,7 @@ const createStudentController = async (
         paymentMethod ENUM('esewa','khalti','cod'),
         paymentStatus ENUM('paid','pending', 'unpaid'),
         totalAmount VARCHAR(10) NOT NULL,
-        orderId VARCHAR(26) REFERENCES student_order_${userId} NOT NULL,
+        orderId VARCHAR(26) REFERENCES student_order_${userId},
 
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
         updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
@@ -63,7 +71,7 @@ const createStudentController = async (
   //insert query
 
   const data = await sequelize.query(
-    `INSERT INTO student student_order_${userId}(whatsapp_no,email,remarks)
+    `INSERT INTO student_order_${userId}(whatsapp_no,remarks,email)
             VALUES(?,?,?)`,
     {
       type: QueryTypes.INSERT,
@@ -81,4 +89,34 @@ const createStudentController = async (
       }
     );
   }
+
+  if (paymentMethod === PaymentMethod.KHALTI) {
+    const response = await khaltiPayment({
+      return_url: "http://localhost:3000/",
+      website_url: "http://localhost:3000/",
+      amount: amount,
+      purchase_order_id: "test12345",
+      purchase_order_name: "manojpuntest",
+    });
+    if(response.status === 200){
+       return res.status(200).json({
+        message:"payment process",
+        data: response.data
+      })
+    }
+    else{
+       return res.status(200).json({
+        message:"something went wrong please try again !!!"
+      })
+    }
+    
+  }
+
+  if (paymentMethod === PaymentMethod.ESEWA) {
+  }
+
+  if (paymentMethod === PaymentMethod.COD) {
+  }
 };
+
+export { createStudentController };
