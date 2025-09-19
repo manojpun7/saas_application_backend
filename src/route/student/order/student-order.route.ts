@@ -7,7 +7,7 @@ import {
   restrictTo,
 } from "../../../middleware/middleware";
 import { UserRole } from "../../../middleware/type";
-import { createStudentController } from "../../../controller/student/order/student-order.controller";
+import { createStudentController, studentCoursePaymentVerificationMethod } from "../../../controller/student/order/student-order.controller";
 const router: Router = express.Router();
 
 router
@@ -17,6 +17,14 @@ router
     changeUserForTableName,
     restrictTo(UserRole.Student),
     asyncErrorHandler(createStudentController)
+  );
+router
+  .route("/order/verify-payment")
+  .post(
+    isLoggedIn,
+    changeUserForTableName,
+    restrictTo(UserRole.Student),
+    asyncErrorHandler(studentCoursePaymentVerificationMethod)
   );
 
 export default router;
